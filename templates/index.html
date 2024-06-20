@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diagnostic Expert System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var socket=io.connect("http://localhost:5000")
+            socket.on("connect",function(){
+                console.log("connected");
+                socket.emit("message", { answer: "user connected!",type:"a", chat_id: 1 }); // Pass chat_id here
+            });
+            socket.on("message",function(data){
+                console.log(data);
+                
+                $('#question').append($('<p>').text(data['answer']+ " " + data["valid"]));
+            });
+
+            $('#sendBtn').on('click',function(){
+                var answer = $('#message').val();
+                var chat_id = 1; // Replace with the actual chat_id
+                socket.emit("message", { answer: answer,type:"a", chat_id: chat_id }); // Pass chat_id here
+                $('#message').val('');
+            });
+        });
+    </script>
+    <div id="question"></div>
+    <input type="text" id="message" />
+    <button id="sendBtn">Submit</button>
+</body>
+</html>
