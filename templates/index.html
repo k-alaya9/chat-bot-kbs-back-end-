@@ -8,7 +8,7 @@
 <body>
     <script type="text/javascript">
         $(document).ready(function(){
-            var socket=io.connect("http://localhost:5000")
+            var socket=io.connect("http://192.168.43.248:5000")
             socket.on("connect",function(){
                 console.log("connected");
                 socket.emit("message", { answer: "user connected!",type:"a", chat_id: 1 }); // Pass chat_id here
@@ -21,8 +21,8 @@
 
             $('#sendBtn').on('click',function(){
                 var answer = $('#message').val();
-                var chat_id = 1; // Replace with the actual chat_id
-                socket.emit("message", { answer: answer,type:"a", chat_id: chat_id }); // Pass chat_id here
+                var chat_id = 1; 
+                socket.emit("message", { answer: answer,type:"a", chat_id: chat_id });
                 $('#message').val('');
             });
         });

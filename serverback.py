@@ -10,7 +10,7 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 token = None
 
 def login_and_get_token(username, password):
-    url = "http://127.0.0.1:8080/api/auth/login"
+    url = "http://192.168.43.248:8080/api/auth/login"
     data = {"username": username, "password": password}
     response = requests.post(url, json=data)
     if response.status_code == 200:
@@ -40,7 +40,7 @@ def handle_message(data):
     send(data, broadcast=True)
 
     if typeM == "q":
-        url = "http://127.0.0.1:8080/api/chat/message"
+        url = "http://192.168.43.248:8080/api/chat/message"
         headers = {'Authorization': f'Bearer {token}'}
         data = {"content": answer, "chat_id": chat_id}
         response = requests.post(url, json=data, headers=headers)
@@ -56,4 +56,4 @@ def index():
 if __name__ == '__main__':
 
     login_and_get_token('chatbot', '12345678')
-    socketio.run(app, host="localhost")
+    socketio.run(app, host="192.168.43.248")

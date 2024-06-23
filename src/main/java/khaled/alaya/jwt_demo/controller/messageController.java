@@ -2,6 +2,7 @@ package khaled.alaya.jwt_demo.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,8 +37,13 @@ public class messageController {
     }
 
         @GetMapping("/{chat}")
-    public List<message> geChat(@PathVariable Long chat) {
-        return messageService.findByChat_id(chat);
+    public ResponseEntity<Object> geChat(@PathVariable Long chat) {
+        try {
+            return ResponseEntity.ok(messageService.findByChat_id(chat));
+
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
     @DeleteMapping("/message/{message}")
     public void deletedMessage(@PathVariable message message){

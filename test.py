@@ -15,7 +15,6 @@ from threading import Event
 sio = socketio.Client()
 stop_waiting_event = Event()
 
-
 class Answer(Fact):
     cf = Field(float, default=1.0)
 
@@ -27,13 +26,14 @@ class DiagnosticExpert(KnowledgeEngine):
 
     @sio.event
     def recommend_action(self, action, cf=1):
-        sio.emit("message",json.dumps({"answer":f"I recommend that you {action} (Certainty: {cf*100}%)\n","type":"q","chat_id":1}))
+        sio.emit("message",json.dumps({"answer":f"I recommend that you {action} (Certainty: {cf*100}%)\n","type":"q","chat_id":self.chat_id}))
         print(f"I recommend that you {action} (Certainty: {cf*100}%)\n")
 
     @DefFacts()
     def init(self, **kwargs):
         self.current_question = None
         self.answer=None
+        self.chat_id=None
         yield question(ident="unrecognized_email",
                        Type="multi",
                        valid=["yes", "no"],
@@ -1197,8 +1197,9 @@ class DiagnosticExpert(KnowledgeEngine):
     def ask_user(self, question, Type, valid=None,):
         answer = ""
         stop_waiting_event.clear()
-        valid_answers = "Valid answers are: " + " / ".join(valid)
-        sio.emit('message', json.dumps({"answer": question, "type": "q", "chat_id": 1, "valid": valid_answers}))
+        # valid_answers = "Valid answers are: " + " / ".join(valid)
+        valid_answers = valid
+        sio.emit('message', json.dumps({"answer": question, "type": "q", "chat_id": self.chat_id, "valid": valid_answers}))
         stop_waiting_event.wait()
         print(self.answer)
         answer=self.answer
@@ -1255,7 +1256,7 @@ def message(data):
     if data != "user connected!":
         answer = data.get('answer')
         typeM=data.get('type')
-        chat_id = data.get('chat_id')
+        expert.chat_id = data.get('chat_id')
         print("Received message: ", answer)
         print(expert.current_question)
         # Process the received message and declare it as an Answer fact
@@ -1269,5 +1270,5 @@ def connect():
     print('Connection established')
 
 if __name__ == '__main__':
-    sio.connect('http://localhost:5000')
+    sio.connect('http://192.168.43.248:5000')
     sio.wait()
